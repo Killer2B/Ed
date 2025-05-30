@@ -569,7 +569,7 @@
         const headingColor = '#1E3A8A'; 
 
         // The URL to your PHP script on InfinityFree
-        const phpScriptUrl = 'https://lol78test.kesug.com/gemini_handler.php'; //  <-- استبدل هذا بالرابط الصحيح لملف PHP الخاص بك
+        const phpScriptUrl = 'https://lol78test.kesug.com/gemini_handler.php'; //  <-- تأكد أن هذا الرابط صحيح تمامًا
 
         Chart.defaults.font.family = 'Cairo';
         Chart.defaults.color = darkGrayText; 
@@ -750,10 +750,13 @@
                     const logResult = await response.json();
                     console.log('Server log response:', logResult.message);
                 } else {
-                    console.error('Failed to log interaction to server:', response.status);
+                    // Log more detailed error from server if possible
+                    const errorText = await response.text();
+                    console.error('Failed to log interaction to server:', response.status, response.statusText, errorText);
                 }
             } catch (error) {
-                console.error('Error logging interaction to server:', error);
+                // This catch block handles network errors for the logging request itself
+                console.error('Network error logging interaction to server:', error);
             }
         }
 
@@ -773,18 +776,23 @@
                 copingStrategiesResultDiv.innerHTML = ''; 
 
                 let fetchedApiKey = '';
+                let aiGeneratedText = 'لم يتم إنشاء رد من الذكاء الاصطناعي.'; // Default in case of early failure
 
                 try {
                     // 1. Fetch API Key from PHP script
+                    console.log(`Attempting to fetch API key from: ${phpScriptUrl}?action=get_key`);
                     const keyResponse = await fetch(`${phpScriptUrl}?action=get_key`);
+                    
                     if (!keyResponse.ok) {
-                        throw new Error(`فشل في جلب مفتاح API من الخادم (الحالة: ${keyResponse.status})`);
+                        const errorText = await keyResponse.text();
+                        throw new Error(`فشل في جلب مفتاح API من الخادم (الحالة: ${keyResponse.status} ${keyResponse.statusText}). الرد من الخادم: ${errorText}`);
                     }
                     const keyData = await keyResponse.json();
                     if (!keyData.apiKey) {
-                        throw new Error('مفتاح API غير موجود في الاستجابة من الخادم.');
+                        throw new Error('مفتاح API غير موجود أو فارغ في الاستجابة من الخادم.');
                     }
                     fetchedApiKey = keyData.apiKey;
+                    console.log("API Key fetched successfully.");
 
                     // 2. Call Gemini API
                     let chatHistory = [];
@@ -792,6 +800,7 @@
                     const payload = { contents: chatHistory };
                     const geminiApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${fetchedApiKey}`;
                     
+                    console.log(`Attempting to call Gemini API: ${geminiApiUrl}`);
                     const geminiResponse = await fetch(geminiApiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -799,13 +808,13 @@
                     });
 
                     if (!geminiResponse.ok) {
-                        const errorData = await geminiResponse.json().catch(() => ({ error: { message: 'Unknown API error structure' } }));
+                        const errorData = await geminiResponse.json().catch(() => ({ error: { message: 'Unknown API error structure from Gemini' } }));
                         console.error("Gemini API Error Data:", errorData);
-                        throw new Error(`فشلت الاستجابة من Gemini API (الحالة: ${geminiResponse.status}). ${errorData.error?.message || 'خطأ غير معروف من الواجهة البرمجية لـ Gemini.'}`);
+                        throw new Error(`فشلت الاستجابة من Gemini API (الحالة: ${geminiResponse.status} ${geminiResponse.statusText}). ${errorData.error?.message || 'خطأ غير معروف من الواجهة البرمجية لـ Gemini.'}`);
                     }
 
                     const result = await geminiResponse.json();
-                    let aiGeneratedText = '';
+                    console.log("Gemini API response received:", result);
 
                     if (result.candidates && result.candidates.length > 0 &&
                         result.candidates[0].content && result.candidates[0].content.parts &&
@@ -822,21 +831,20 @@
                         copingStrategiesResultDiv.innerHTML = formattedText || '<p>لم يتم العثور على اقتراحات. حاول مرة أخرى.</p>';
                     } else {
                         console.error("Unexpected Gemini API response structure:", result);
-                        copingStrategiesResultDiv.innerHTML = '<p>عذرًا، لم نتمكن من إنشاء اقتراحات في الوقت الحالي. يرجى المحاولة مرة أخرى لاحقًا.</p>';
-                        aiGeneratedText = 'Error: Unexpected API response structure.';
+                        copingStrategiesResultDiv.innerHTML = '<p>عذرًا، لم نتمكن من إنشاء اقتراحات في الوقت الحالي بسبب استجابة غير متوقعة. يرجى المحاولة مرة أخرى لاحقًا.</p>';
+                        aiGeneratedText = 'Error: Unexpected API response structure from Gemini.';
                     }
                     
-                    // 3. Log interaction to server
-                    await logInteractionToServer(userFeeling || "لم يتم إدخال شعور محدد", aiGeneratedText);
-
                 } catch (error) {
-                    console.error('Error in getCopingStrategies:', error);
-                    copingStrategiesResultDiv.innerHTML = `<p>حدث خطأ: ${error.message}. يرجى التأكد من صحة رابط ملف PHP وأن الخادم يعمل بشكل صحيح.</p>`;
-                    // Log error attempt
-                    await logInteractionToServer(userFeeling || "لم يتم إدخال شعور محدد", `Error fetching suggestions: ${error.message}`);
+                    console.error('Error in getCopingStrategies main try block:', error);
+                    copingStrategiesResultDiv.innerHTML = `<p class="text-red-600">حدث خطأ في الاتصال بالخادم أو معالجة الطلب: ${error.message}<br>يرجى التحقق من التالي:<br>1. أن رابط ملف PHP (<code>${phpScriptUrl}</code>) صحيح ويمكن الوصول إليه.<br>2. أن الخادم يسمح بالطلبات من هذا الموقع (تحقق من إعدادات CORS على الخادم، خاصة إذا كانت هذه الصفحة تعمل داخل إطار iframe أو بيئة مختلفة عن النطاق المسموح به في PHP).<br>3. اتصالك بالإنترنت.<br>4. راجع وحدة التحكم (Console) لمزيد من التفاصيل الفنية.</p>`;
+                    aiGeneratedText = `Error fetching suggestions: ${error.message}`; // Log the actual error
                 } finally {
                     loadingIndicator.style.display = 'none';
                     copingStrategiesResultDiv.style.display = 'block';
+                    // 3. Log interaction to server, regardless of Gemini success, to capture user input and any errors
+                    // Ensure logging happens after UI is updated
+                    await logInteractionToServer(userFeeling || "لم يتم إدخال شعور محدد", aiGeneratedText);
                 }
             });
         }

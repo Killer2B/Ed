@@ -784,11 +784,17 @@
                     const keyResponse = await fetch(`${phpScriptUrl}?action=get_key`);
                     
                     if (!keyResponse.ok) {
-                        const errorText = await keyResponse.text();
+                        const errorText = await keyResponse.text().catch(() => "Failed to read error response from server."); // Catch if .text() also fails
+                        console.error(`Failed to fetch API key from server. Status: ${keyResponse.status} ${keyResponse.statusText}. Server response: ${errorText}`);
                         throw new Error(`فشل في جلب مفتاح API من الخادم (الحالة: ${keyResponse.status} ${keyResponse.statusText}). الرد من الخادم: ${errorText}`);
                     }
-                    const keyData = await keyResponse.json();
-                    if (!keyData.apiKey) {
+                    const keyData = await keyResponse.json().catch(err => {
+                        console.error("Failed to parse JSON from key API response:", err);
+                        throw new Error("فشل في تحليل استجابة JSON من الخادم عند جلب مفتاح API.");
+                    });
+
+                    if (!keyData || !keyData.apiKey) { // Check if keyData itself is null/undefined or apiKey is missing
+                        console.error("API Key missing or empty in server response:", keyData);
                         throw new Error('مفتاح API غير موجود أو فارغ في الاستجابة من الخادم.');
                     }
                     fetchedApiKey = keyData.apiKey;
@@ -837,13 +843,24 @@
                     
                 } catch (error) {
                     console.error('Error in getCopingStrategies main try block:', error);
-                    copingStrategiesResultDiv.innerHTML = `<p class="text-red-600">حدث خطأ في الاتصال بالخادم أو معالجة الطلب: ${error.message}<br>يرجى التحقق من التالي:<br>1. أن رابط ملف PHP (<code>${phpScriptUrl}</code>) صحيح ويمكن الوصول إليه.<br>2. أن الخادم يسمح بالطلبات من هذا الموقع (تحقق من إعدادات CORS على الخادم، خاصة إذا كانت هذه الصفحة تعمل داخل إطار iframe أو بيئة مختلفة عن النطاق المسموح به في PHP).<br>3. اتصالك بالإنترنت.<br>4. راجع وحدة التحكم (Console) لمزيد من التفاصيل الفنية.</p>`;
-                    aiGeneratedText = `Error fetching suggestions: ${error.message}`; // Log the actual error
+                    let detailedErrorMessage = `<p class="text-red-500 font-semibold">حدث خطأ في الاتصال بالخادم أو معالجة الطلب:</p>`;
+                    detailedErrorMessage += `<p class="text-red-700 mt-2 text-sm"><strong>الرسالة:</strong> ${error.message}</p>`;
+                    detailedErrorMessage += `<p class="mt-3 text-sm text-gray-700">يرجى التحقق من التالي:</p>`;
+                    detailedErrorMessage += `<ol class="list-decimal list-inside text-sm text-gray-600 mt-1 space-y-1">`;
+                    detailedErrorMessage += `<li>أن رابط ملف PHP (<code>${phpScriptUrl}</code>) صحيح ويمكن الوصول إليه مباشرة في المتصفح.</li>`;
+                    if (error.message.toLowerCase().includes('failed to fetch') || error.message.toLowerCase().includes('networkerror')) {
+                        detailedErrorMessage += `<li><strong>مشكلة CORS محتملة:</strong> تأكد أن الخادم في <code>${phpScriptUrl}</code> يسمح بالطلبات من النطاق الحالي لهذه الصفحة. النطاق الحالي هو: <code>${window.location.origin}</code>. يجب تحديث رأس 'Access-Control-Allow-Origin' في ملف PHP ليسمح بهذا النطاق أو استخدم '*' (أقل أمانًا) إذا كنت تختبر من بيئة غير متوقعة.</li>`;
+                    } else {
+                        detailedErrorMessage += `<li>أن الخادم يسمح بالطلبات من هذا الموقع (تحقق من إعدادات CORS على الخادم).</li>`;
+                    }
+                    detailedErrorMessage += `<li>اتصالك بالإنترنت مستقر.</li>`;
+                    detailedErrorMessage += `<li>راجع وحدة التحكم (Console) في المتصفح (اضغط F12 ثم اختر تبويب Console و Network) لمزيد من التفاصيل الفنية حول الخطأ.</li>`;
+                    detailedErrorMessage += `</ol>`;
+                    copingStrategiesResultDiv.innerHTML = detailedErrorMessage;
+                    aiGeneratedText = `Error fetching suggestions: ${error.message}`; 
                 } finally {
                     loadingIndicator.style.display = 'none';
                     copingStrategiesResultDiv.style.display = 'block';
-                    // 3. Log interaction to server, regardless of Gemini success, to capture user input and any errors
-                    // Ensure logging happens after UI is updated
                     await logInteractionToServer(userFeeling || "لم يتم إدخال شعور محدد", aiGeneratedText);
                 }
             });

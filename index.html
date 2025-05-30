@@ -1,1 +1,535 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنفوجرافيك: فهم الإدمان ومواجهته</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #F8F9FA; /* Light Gray */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Default max-width, can be overridden by Tailwind */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Base height */
+            max-height: 450px; /* Max height */
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        h1, h2, h3 {
+            color: #2A6EBB; /* Primary Blue */
+        }
+        .stat-number {
+            color: #2A6EBB; /* Primary Blue */
+            font-weight: bold;
+        }
+        .accent-text {
+            color: #34A89A; /* Secondary Teal */
+        }
+        .swot-quadrant {
+            border: 1px solid #D1D5DB; /* Tailwind gray-300 */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            min-height: 150px;
+        }
+        .flowchart-step {
+            background-color: #E0F2FE; /* Light blue, adjust from palette */
+            border: 2px solid #2A6EBB; /* Primary Blue */
+            color: #1E3A8A; /* Darker blue */
+        }
+        .flowchart-arrow {
+            font-size: 2rem;
+            color: #2A6EBB; /* Primary Blue */
+        }
+    </style>
+    <!-- 
+        Color Palette Chosen: "Hope & Clarity" (Custom)
+        Primary Blue: #2A6EBB
+        Secondary Teal: #34A89A
+        Accent Yellow: #FFC107
+        Light Gray (bg): #F8F9FA
+        Medium Gray (text): #6C757D
+        Dark Gray/Black (text): #212529
+        Card Background: white
+
+        Narrative & Structure Plan:
+        1. Header: Title
+        2. Section 1: What is Addiction? (Definition, common characteristics, key stat)
+        3. Section 2: The Brain & Addiction (Reward system, dopamine)
+        4. Section 3: Risk Factors (Radar chart)
+        5. Section 4: Prevalence Snapshot (Global drug use bar chart, MENA DALY line chart)
+        6. Section 5: Chemical Addiction (Alcohol, Opioids, Stimulants - with problem/solution highlights & small viz)
+        7. Section 6: Behavioral Addiction (Pornography, Food, Gambling, Internet/Gaming - with problem/solution highlights & small viz)
+        8. Section 7: SWOT Analysis (HTML/CSS diagram)
+        9. Section 8: Path to Recovery (HTML/CSS list)
+        10. Footer
+
+        Visualization Choices & Justification (Confirming NO SVG/Mermaid):
+        - Global drug use stat: Single Big Number (HTML/CSS). Goal: Inform. Justification: Impactful. Method: HTML/CSS. NO SVG.
+        - Common Characteristics: HTML/CSS diagram. Goal: Organize. Justification: Clear listing. Method: HTML/CSS. NO SVG.
+        - Reward Pathway: HTML/CSS diagram. Goal: Organize/Process. Justification: Simple explanation. Method: HTML/CSS. NO SVG.
+        - Risk Factors: Chart.js Radar Chart. Goal: Compare. Justification: Multi-dimensional view. Library: Chart.js (Canvas). NO SVG.
+        - Global Drug Prevalence by Type: Chart.js Bar Chart. Goal: Compare. Justification: Category comparison. Library: Chart.js (Canvas). NO SVG.
+        - MENA DALY Trend: Chart.js Line Chart. Goal: Change. Justification: Trend over time. Library: Chart.js (Canvas). NO SVG.
+        - Alcohol Problems: Chart.js Donut Chart. Goal: Inform. Justification: Proportions. Library: Chart.js (Canvas). NO SVG.
+        - Opioid Addiction Cycle (Simplified): HTML/CSS Process Flow. Goal: Organize. Justification: Progression. Method: HTML/CSS. NO SVG.
+        - Gambling Addiction Stages: HTML/CSS Process Flow. Goal: Organize. Justification: Phases. Method: HTML/CSS. NO SVG.
+        - SWOT Analysis: HTML/CSS Diagram. Goal: Organize. Justification: Strategic overview. Method: HTML/CSS. NO SVG.
+        - Steps to Recovery: HTML/CSS List. Goal: Organize. Justification: Actionable steps. Method: HTML/CSS. NO SVG.
+
+        Confirmation:
+        - NO Mermaid JS was used.
+        - NO SVG graphics were used anywhere in this output. All charts are rendered to Canvas by Chart.js. Diagrams are HTML/CSS.
+    -->
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <header class="bg-[#2A6EBB] text-white p-6 text-center shadow-md">
+        <h1 class="text-3xl md:text-4xl font-bold">فهم الإدمان: رؤى وحلول</h1>
+        <p class="text-lg mt-2">تحليل شامل لاتجاهات الإدمان بناءً على أبحاث معمقة</p>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="what-is-addiction" class="mb-12">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-center">ما هو الإدمان؟</h2>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed text-center">
+                    الإدمان هو حالة صحية معقدة تتميز بالانخراط القهري في سلوكيات أو تعاطي مواد ضارة على الرغم من العواقب السلبية. تعرف منظمة الصحة العالمية الإدمان بأنه رغبة قهرية للاستمرار في تعاطي المادة أو السلوك، مما يسبب اعتمادًا نفسيًا وجسديًا وتأثيرًا ضارًا على الفرد والمجتمع.
+                </p>
+                <div class="text-center my-8">
+                    <p class="text-xl text-gray-600">على الصعيد العالمي في عام 2022:</p>
+                    <p class="text-5xl stat-number">292 مليون</p>
+                    <p class="text-xl text-gray-600">شخص تعاطوا المخدرات غير المشروعة.</p>
+                    <p class="text-sm text-gray-500 mt-1">(المصدر: UNODC, 2024)</p>
+                </div>
+                <h3 class="text-xl font-semibold mb-3 text-[#34A89A]">الخصائص المشتركة للإدمان:</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+                    <div class="bg-blue-50 p-4 rounded-lg shadow"><strong>فقدان السيطرة:</strong> صعوبة التحكم في الاستخدام.</div>
+                    <div class="bg-teal-50 p-4 rounded-lg shadow"><strong>السلوك القهري:</strong> رغبة ملحة لا تقاوم.</div>
+                    <div class="bg-blue-50 p-4 rounded-lg shadow"><strong>العواقب السلبية:</strong> الاستمرار رغم الضرر.</div>
+                    <div class="bg-teal-50 p-4 rounded-lg shadow"><strong>التحمل:</strong> الحاجة لجرعات أو سلوكيات متزايدة.</div>
+                    <div class="bg-blue-50 p-4 rounded-lg shadow"><strong>الانسحاب:</strong> أعراض مزعجة عند التوقف.</div>
+                    <div class="bg-teal-50 p-4 rounded-lg shadow"><strong>إهمال الأنشطة:</strong> التخلي عن الاهتمامات الأخرى.</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="brain-addiction" class="mb-12">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-center">العقل والإدمان: كيف يعمل؟</h2>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                    يلعب نظام المكافأة في الدماغ دورًا مركزيًا. المواد والسلوكيات الإدمانية "تختطف" هذا النظام، مما يؤدي إلى إطلاق كميات كبيرة من الدوبامين، وهو ناقل عصبي مرتبط بالمتعة والتحفيز. هذا الفيضان من الدوبامين يعزز السلوك الإدماني بقوة، مما يجعل الدماغ "يتعلم" أن المادة أو السلوك أكثر أهمية من المكافآت الطبيعية. مع مرور الوقت، يتكيف الدماغ، مما يؤدي إلى التحمل وأعراض الانسحاب.
+                </p>
+                <div class="text-center p-4 border border-dashed border-[#34A89A] rounded-lg">
+                    <h3 class="text-xl font-semibold mb-2 text-[#34A89A]">نظام المكافأة في الدماغ (مبسط)</h3>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8 text-gray-700">
+                        <div class="flowchart-step p-3 text-sm w-full md:w-auto text-center">محفز طبيعي (طعام، ماء)</div>
+                        <div class="flowchart-arrow hidden md:block">&rarr;</div>
+                         <div class="flowchart-arrow block md:hidden self-center">&darr;</div>
+                        <div class="flowchart-step p-3 text-sm w-full md:w-auto text-center">إطلاق معتدل للدوبامين</div>
+                        <div class="flowchart-arrow hidden md:block">&rarr;</div>
+                        <div class="flowchart-arrow block md:hidden self-center">&darr;</div>
+                        <div class="flowchart-step p-3 text-sm w-full md:w-auto text-center">شعور بالرضا، تعزيز السلوك</div>
+                    </div>
+                    <p class="my-4 text-lg font-semibold text-[#FF8C00]">لكن مع الإدمان:</p>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8 text-gray-700">
+                        <div class="flowchart-step p-3 text-sm bg-orange-100 border-orange-500 text-orange-700 w-full md:w-auto text-center">مادة/سلوك إدماني</div>
+                        <div class="flowchart-arrow hidden md:block text-orange-500">&rarr;</div>
+                        <div class="flowchart-arrow block md:hidden self-center text-orange-500">&darr;</div>
+                        <div class="flowchart-step p-3 text-sm bg-orange-100 border-orange-500 text-orange-700 w-full md:w-auto text-center">فيضان من الدوبامين</div>
+                        <div class="flowchart-arrow hidden md:block text-orange-500">&rarr;</div>
+                        <div class="flowchart-arrow block md:hidden self-center text-orange-500">&darr;</div>
+                        <div class="flowchart-step p-3 text-sm bg-orange-100 border-orange-500 text-orange-700 w-full md:w-auto text-center">نشوة قوية، "اختطاف" النظام</div>
+                    </div>
+                </div>
+                 <p class="text-sm text-gray-600 mt-4 leading-relaxed">هذا "الاختطاف" يؤدي إلى تغييرات طويلة الأمد في بنية الدماغ ووظيفته، مما يفسر صعوبة التعافي واحتمالية الانتكاس.</p>
+            </div>
+        </section>
+
+        <section id="risk-factors" class="mb-12">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-center">عوامل الخطر: من هو الأكثر عرضة؟</h2>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                    الإدمان ليس نتيجة لسبب واحد، بل هو تفاعل معقد بين عوامل وراثية، بيئية، ونفسية. فهم هذه العوامل يساعد في الوقاية والتدخل المبكر.
+                </p>
+                <div class="chart-container mx-auto h-80 md:h-96">
+                    <canvas id="riskFactorsChart"></canvas>
+                </div>
+                <p class="text-sm text-gray-600 mt-4 text-center">الرسم البياني يوضح الأبعاد المتعددة لعوامل الخطر. كلما زادت العوامل، ارتفع احتمال تطور الإدمان.</p>
+            </div>
+        </section>
+
+        <section id="prevalence" class="mb-12">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-6 text-center">لمحة عن الانتشار: أرقام مقلقة</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3 text-center text-[#34A89A]">انتشار أنواع المخدرات عالميًا (2022)</h3>
+                        <p class="text-gray-700 mb-4 text-sm">يُظهر الرسم البياني أعداد المتعاطين لمختلف أنواع المخدرات عالميًا، حيث يتصدر القنب القائمة.</p>
+                        <div class="chart-container h-80 md:h-96">
+                            <canvas id="globalDrugUseChart"></canvas>
+                        </div>
+                         <p class="text-xs text-gray-500 mt-2 text-center">(المصدر: UNODC, 2024)</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-3 text-center text-[#34A89A]">عبء اضطرابات تعاطي المواد في الشرق الأوسط وشمال أفريقيا</h3>
+                        <p class="text-gray-700 mb-4 text-sm">شهدت المنطقة ارتفاعًا مقلقًا في سنوات العمر المعدلة حسب الإعاقة (DALY) بسبب تعاطي المواد بين عامي 1990 و 2019.</p>
+                        <div class="chart-container h-80 md:h-96">
+                            <canvas id="menaDalyChart"></canvas>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2 text-center">(المصدر: بيانات DALY المذكورة في التقرير)</p>
+                    </div>
+                </div>
+                <p class="text-md text-gray-700 mt-8 leading-relaxed">
+                    في منطقة الشرق الأوسط وشمال أفريقيا، ارتفع المعدل الموحد حسب العمر لسنوات العمر المعدلة حسب الإعاقة (DALY) لاضطرابات تعاطي المواد من 190.11 لكل 100,000 نسمة في عام 1990 إلى 234.93 في عام 2019، بزيادة قدرها 23.58%. هذا الاتجاه يستدعي تكثيف جهود الوقاية والعلاج في المنطقة.
+                </p>
+            </div>
+        </section>
+
+        <section id="chemical-addiction" class="mb-12">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-center">الإدمان الكيميائي: عالم المواد</h2>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                    يشمل الإدمان الكيميائي الاعتماد القهري على مواد مثل الكحول، المواد الأفيونية، المنشطات، وغيرها. هذه المواد تغير كيمياء الدماغ وتؤدي إلى اعتماد جسدي ونفسي.
+                </p>
+                <div class="space-y-8">
+                    <div class="p-4 border border-blue-200 rounded-lg">
+                        <h3 class="text-xl font-semibold text-[#2A6EBB] mb-2">إدمان الكحول</h3>
+                        <p class="text-gray-700 text-sm mb-2">يؤثر على ملايين الأشخاص ويسبب مشاكل صحية واجتماعية وقانونية واسعة النطاق.</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                            <div>
+                                <p><strong>أبرز المشاكل:</strong> أمراض الكبد، مشاكل القلب، تفكك أسري، حوادث.</p>
+                                <p><strong>بعض الحلول:</strong> إزالة السموم، أدوية (نالتريكسون)، علاج نفسي (CBT)، مجموعات الدعم (AA).</p>
+                            </div>
+                            <div class="chart-container h-48 md:h-56">
+                                <canvas id="alcoholProblemsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 border border-teal-200 rounded-lg">
+                        <h3 class="text-xl font-semibold text-[#34A89A] mb-2">إدمان المواد الأفيونية (مثل الهيروين والفنتانيل)</h3>
+                        <p class="text-gray-700 text-sm mb-2">شديد الإدمان، مع خطر عالٍ للجرعة الزائدة، خاصة مع المواد المصنعة.</p>
+                         <p><strong>أبرز المشاكل:</strong> جرعات زائدة مميتة، أمراض معدية (HIV، التهاب الكبد)، انهيار اجتماعي.</p>
+                         <p><strong>بعض الحلول:</strong> علاج بمساعدة الأدوية (ميثادون، بوبرينورفين)، نالوكسون للطوارئ، علاج نفسي.</p>
+                        <div class="mt-3 text-center">
+                            <h4 class="text-md font-semibold mb-1">دورة إدمان الأفيونيات (مبسطة):</h4>
+                            <div class="flex flex-wrap justify-center items-center text-xs">
+                                <span class="flowchart-step p-2 m-1">ألم/ضيق</span> <span class="flowchart-arrow mx-1">&rarr;</span>
+                                <span class="flowchart-step p-2 m-1">وصفة طبية/تعاطي أولي</span> <span class="flowchart-arrow mx-1">&rarr;</span>
+                                <span class="flowchart-step p-2 m-1">اعتماد وتحمل</span> <span class="flowchart-arrow mx-1">&rarr;</span>
+                                <span class="flowchart-step p-2 m-1">بحث قهري عن المادة</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 border border-yellow-300 rounded-lg">
+                        <h3 class="text-xl font-semibold text-[#FFC107] mb-2">إدمان المنشطات (مثل الكوكايين والميثامفيتامين)</h3>
+                        <p class="text-gray-700 text-sm mb-2">تسبب نشوة قوية تتبعها انهيارات، مع مخاطر قلبية ونفسية حادة.</p>
+                        <p><strong>أبرز المشاكل:</strong> نوبات قلبية، سكتات دماغية، ذهان، مشاكل أسنان (فم الميث).</p>
+                        <p><strong>بعض الحلول:</strong> علاج سلوكي معرفي (CBT)، نموذج الماتريكس، مجموعات دعم.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="behavioral-addiction" class="mb-12">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-center">الإدمان السلوكي: قيود بلا مواد</h2>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                    يمكن أن تتطور أنماط إدمانية حول سلوكيات معينة مثل المقامرة، الإباحية، الطعام، أو الإنترنت، مما يؤدي إلى عواقب وخيمة مشابهة لإدمان المواد.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-4 border border-purple-200 rounded-lg">
+                        <h3 class="text-lg font-semibold text-purple-600 mb-2">إدمان الإباحية</h3>
+                        <p class="text-gray-700 text-sm mb-2">استخدام قهري للمحتوى الإباحي يؤثر على العلاقات والصحة النفسية.</p>
+                        <p><strong>أبرز المشاكل:</strong> توقعات جنسية غير واقعية، عزلة، قلق، اكتئاب.</p>
+                        <p><strong>بعض الحلول:</strong> علاج سلوكي معرفي، مجموعات دعم، تطوير عادات صحية.</p>
+                    </div>
+                     <div class="p-4 border border-green-200 rounded-lg">
+                        <h3 class="text-lg font-semibold text-green-600 mb-2">إدمان الطعام</h3>
+                        <p class="text-gray-700 text-sm mb-2">عدم القدرة على التحكم في تناول أطعمة معينة (خاصة المصنعة).</p>
+                        <p><strong>أبرز المشاكل:</strong> سمنة، سكري، أمراض قلب، تدني احترام الذات.</p>
+                        <p><strong>بعض الحلول:</strong> استشارات تغذية، علاج سلوكي معرفي، أكل واعي.</p>
+                    </div>
+                    <div class="p-4 border border-red-200 rounded-lg">
+                        <h3 class="text-lg font-semibold text-red-600 mb-2">إدمان القمار</h3>
+                        <p class="text-gray-700 text-sm mb-2">سلوك مقامرة مستمر رغم الخسائر المالية والاجتماعية الفادحة.</p>
+                        <p><strong>أبرز المشاكل:</strong> ديون ضخمة، مشاكل قانونية، انهيار العلاقات، اكتئاب.</p>
+                        <p><strong>بعض الحلول:</strong> علاج سلوكي معرفي، مجموعات (Gamblers Anonymous).</p>
+                         <div class="mt-3 text-center">
+                            <h4 class="text-md font-semibold mb-1 text-xs">مراحل إدمان القمار (مبسطة):</h4>
+                            <div class="flex flex-wrap justify-center items-center text-xs">
+                                <span class="flowchart-step bg-red-50 border-red-500 text-red-700 p-1 m-1">نصر</span> <span class="flowchart-arrow text-red-500 mx-1">&rarr;</span>
+                                <span class="flowchart-step bg-red-50 border-red-500 text-red-700 p-1 m-1">خسارة</span> <span class="flowchart-arrow text-red-500 mx-1">&rarr;</span>
+                                <span class="flowchart-step bg-red-50 border-red-500 text-red-700 p-1 m-1">يأس</span> <span class="flowchart-arrow text-red-500 mx-1">&rarr;</span>
+                                <span class="flowchart-step bg-red-50 border-red-500 text-red-700 p-1 m-1">فقدان أمل</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 border border-indigo-200 rounded-lg">
+                        <h3 class="text-lg font-semibold text-indigo-600 mb-2">إدمان الإنترنت والألعاب الإلكترونية</h3>
+                        <p class="text-gray-700 text-sm mb-2">استخدام مفرط وغير منضبط يؤثر على الحياة اليومية والصحة النفسية.</p>
+                        <p><strong>أبرز المشاكل:</strong> عزلة اجتماعية، اكتئاب، قلق، إهمال دراسي/مهني، مشاكل جسدية.</p>
+                        <p><strong>بعض الحلول:</strong> علاج نفسي، إدارة الوقت، دعم أسري، إيجاد هوايات بديلة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="swot-analysis" class="mb-12">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+                <h2 class="text-2xl font-bold mb-4 text-center">تحليل SWOT لمواجهة الإدمان</h2>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                    يوضح هذا التحليل نقاط القوة والضعف والفرص والتهديدات في سياق مكافحة الإدمان وتقديم الحلول.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-700">
+                    <div class="swot-quadrant bg-green-50">
+                        <h3 class="font-bold text-green-700 mb-2">نقاط القوة (Strengths)</h3>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>فهم متزايد لبيولوجيا الإدمان كمرض.</li>
+                            <li>توفر علاجات فعالة قائمة على الأدلة (CBT, MAT).</li>
+                            <li>توسع شبكات الدعم المجتمعي ومجموعات المساعدة الذاتية.</li>
+                            <li>زيادة الوعي بأهمية الصحة النفسية.</li>
+                        </ul>
+                    </div>
+                    <div class="swot-quadrant bg-red-50">
+                        <h3 class="font-bold text-red-700 mb-2">نقاط الضعف (Weaknesses)</h3>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>الوصمة الاجتماعية المرتبطة بالإدمان وطلب العلاج.</li>
+                            <li>نقص الموارد وصعوبة الوصول للخدمات العلاجية في بعض المناطق.</li>
+                            <li>ارتفاع معدلات الانتكاس وصعوبة الحفاظ على التعافي طويل الأمد.</li>
+                            <li>تعقيد علاج الاضطرابات المصاحبة (التشخيص المزدوج).</li>
+                        </ul>
+                    </div>
+                    <div class="swot-quadrant bg-blue-50">
+                        <h3 class="font-bold text-blue-700 mb-2">الفرص (Opportunities)</h3>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>التقدم في الأبحاث لتطوير علاجات وأدوية جديدة.</li>
+                            <li>استخدام التكنولوجيا في تقديم الدعم والوقاية (تطبيقات، علاج عن بعد).</li>
+                            <li>تغييرات في السياسات نحو نهج صحي عام (بدلاً من العقابي فقط).</li>
+                            <li>زيادة الحملات التوعوية لتقليل الوصمة وتشجيع طلب المساعدة.</li>
+                        </ul>
+                    </div>
+                    <div class="swot-quadrant bg-yellow-50">
+                        <h3 class="font-bold text-yellow-700 mb-2">التهديدات (Threats)</h3>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>ظهور مواد مصنعة جديدة شديدة الخطورة (مثل الفنتانيل).</li>
+                            <li>سهولة الوصول إلى المواد والسلوكيات الإدمانية عبر الإنترنت.</li>
+                            <li>العوامل الاجتماعية والاقتصادية التي تزيد من قابلية التأثر (فقر، بطالة).</li>
+                            <li>الأزمات العالمية التي تؤثر على الصحة النفسية وتزيد من عوامل الخطر.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="path-to-recovery" class="mb-12">
+            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8 text-center">
+                <h2 class="text-2xl font-bold mb-4">طريق التعافي: أمل وحلول</h2>
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                    التعافي من الإدمان رحلة ممكنة تتطلب شجاعة ودعمًا والتزامًا. هناك العديد من الاستراتيجيات والحلول المتاحة لمساعدة الأفراد على استعادة حياتهم.
+                </p>
+                <h3 class="text-xl font-semibold mb-3 text-[#34A89A]">خطوات أساسية نحو التعافي:</h3>
+                <ol class="list-decimal list-inside text-left mx-auto max-w-md space-y-2 text-gray-700">
+                    <li><strong>الاعتراف بالمشكلة:</strong> الإقرار بوجود إدمان والحاجة إلى المساعدة.</li>
+                    <li><strong>طلب المساعدة المتخصصة:</strong> التواصل مع أطباء، معالجين، أو مراكز علاج.</li>
+                    <li><strong>الخضوع للعلاج:</strong> الالتزام بخطة علاجية شاملة (إزالة سموم، أدوية، علاج نفسي).</li>
+                    <li><strong>بناء شبكة دعم:</strong> الاعتماد على الأسرة، الأصدقاء، ومجموعات الدعم.</li>
+                    <li><strong>تطوير مهارات التأقلم:</strong> تعلم كيفية التعامل مع المحفزات ومنع الانتكاس.</li>
+                    <li><strong>تبني نمط حياة صحي:</strong> الاهتمام بالتغذية، الرياضة، والنوم.</li>
+                </ol>
+                <p class="mt-6 text-lg accent-text font-semibold">تذكر: أنت لست وحدك، والتعافي ممكن.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#2A6EBB] text-white text-center p-6 mt-12">
+        <p>&copy; 2025 إنفوجرافيك فهم الإدمان. جميع الحقوق محفوظة (لأغراض العرض التوضيحي).</p>
+        <p class="text-sm mt-1">إذا كنت أنت أو أي شخص تعرفه يعاني من الإدمان، يرجى طلب المساعدة المتخصصة.</p>
+        <p class="text-sm"> الخط الساخن لعلاج الإدمان (مثال): 123-456-7890 </p>
+    </footer>
+
+    <script>
+        const primaryBlue = '#2A6EBB';
+        const secondaryTeal = '#34A89A';
+        const accentYellow = '#FFC107';
+        const lightGray = '#E9ECEF';
+        const darkGray = '#495057';
+
+        Chart.defaults.font.family = 'Cairo';
+        Chart.defaults.color = darkGray;
+
+        function wrapLabels(labels, maxLength = 16) {
+            return labels.map(label => {
+                if (typeof label === 'string' && label.length > maxLength) {
+                    const words = label.split(' ');
+                    const lines = [];
+                    let currentLine = '';
+                    words.forEach(word => {
+                        if ((currentLine + word).length <= maxLength) {
+                            currentLine += (currentLine ? ' ' : '') + word;
+                        } else {
+                            if (currentLine) lines.push(currentLine);
+                            currentLine = word;
+                        }
+                    });
+                    if (currentLine) lines.push(currentLine);
+                    return lines.length > 0 ? lines : [label]; // Return original if somehow it becomes empty
+                }
+                return label;
+            });
+        }
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+        
+        const commonChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: darkGray,
+                        font: { size: 12 }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    },
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 12 },
+                    backgroundColor: 'rgba(0,0,0,0.7)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: darkGray, font: { size: 10 } },
+                    grid: { display: false }
+                },
+                y: {
+                    ticks: { color: darkGray, font: { size: 10 } },
+                    grid: { color: lightGray }
+                }
+            }
+        };
+
+
+        // Risk Factors Chart (Radar)
+        const riskFactorsCtx = document.getElementById('riskFactorsChart')?.getContext('2d');
+        if (riskFactorsCtx) {
+            new Chart(riskFactorsCtx, {
+                type: 'radar',
+                data: {
+                    labels: wrapLabels(['وراثي', 'بيئي (أسرة/أقران)', 'نفسي (اضطرابات)', 'صدمات نفسية', 'بدء مبكر', 'طبيعة المادة/السلوك']),
+                    datasets: [{
+                        label: 'تأثير عامل الخطر (تقديري)',
+                        data: [75, 80, 85, 70, 90, 65], // Hypothetical values for illustration
+                        backgroundColor: 'rgba(52, 168, 154, 0.2)', // secondaryTeal transparent
+                        borderColor: secondaryTeal,
+                        pointBackgroundColor: secondaryTeal,
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: secondaryTeal
+                    }]
+                },
+                options: {
+                    ...commonChartOptions,
+                    scales: {
+                        r: {
+                            angleLines: { color: lightGray },
+                            grid: { color: lightGray },
+                            pointLabels: { font: { size: 11 }, color: darkGray },
+                            ticks: { backdropColor: 'transparent', color: darkGray, stepSize: 25 }
+                        }
+                    },
+                    plugins: {
+                         ...commonChartOptions.plugins,
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Global Drug Use Chart (Bar)
+        const globalDrugUseCtx = document.getElementById('globalDrugUseChart')?.getContext('2d');
+        if (globalDrugUseCtx) {
+            new Chart(globalDrugUseCtx, {
+                type: 'bar',
+                data: {
+                    labels: wrapLabels(['القنب', 'المواد الأفيونية', 'الأمفيتامينات', 'الكوكايين', 'الإكستاسي']),
+                    datasets: [{
+                        label: 'عدد المتعاطين بالملايين (2022)',
+                        data: [228, 60, 30, 23, 20],
+                        backgroundColor: [primaryBlue, secondaryTeal, accentYellow, '#6C757D', '#DC3545'], // Using palette colors + grays/reds
+                        borderColor: darkGray,
+                        borderWidth: 1
+                    }]
+                },
+                options: { ...commonChartOptions, indexAxis: 'y', plugins: { ...commonChartOptions.plugins, legend: { display: false } } }
+            });
+        }
+        
+        // MENA DALY Chart (Line)
+        const menaDalyCtx = document.getElementById('menaDalyChart')?.getContext('2d');
+        if (menaDalyCtx) {
+            new Chart(menaDalyCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1990', '2019'],
+                    datasets: [{
+                        label: 'معدل DALY لكل 100,000 (اضطرابات تعاطي المواد)',
+                        data: [190.11, 234.93],
+                        fill: false,
+                        borderColor: primaryBlue,
+                        tension: 0.1,
+                        pointBackgroundColor: primaryBlue,
+                        pointRadius: 5
+                    }]
+                },
+                options: { ...commonChartOptions, plugins: { ...commonChartOptions.plugins, legend: { display: true, position: 'bottom' } } }
+            });
+        }
+
+        // Alcohol Problems Chart (Donut)
+        const alcoholProblemsCtx = document.getElementById('alcoholProblemsChart')?.getContext('2d');
+        if (alcoholProblemsCtx) {
+            new Chart(alcoholProblemsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: wrapLabels(['مشاكل صحية', 'مشاكل اجتماعية', 'مشاكل قانونية']),
+                    datasets: [{
+                        label: 'أنواع مشاكل إدمان الكحول (تقديري)',
+                        data: [50, 35, 15], // Illustrative percentages
+                        backgroundColor: [primaryBlue, secondaryTeal, accentYellow],
+                        hoverOffset: 4
+                    }]
+                },
+                options: { ...commonChartOptions, plugins: { ...commonChartOptions.plugins, legend: { position: 'bottom', labels: { font: {size: 10}} } }, cutout: '60%' }
+            });
+        }
+
+    </script>
+
+</body>
+</html>

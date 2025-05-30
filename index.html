@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -52,6 +51,20 @@
             font-size: 2rem;
             color: #2A6EBB; /* Primary Blue */
         }
+         /* Loading spinner styles */
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #34A89A; /* Teal */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
     <!-- 
         Color Palette Chosen: "Hope & Clarity" (Custom)
@@ -72,7 +85,7 @@
         6. Section 5: Chemical Addiction (Alcohol, Opioids, Stimulants - with problem/solution highlights & small viz)
         7. Section 6: Behavioral Addiction (Pornography, Food, Gambling, Internet/Gaming - with problem/solution highlights & small viz)
         8. Section 7: SWOT Analysis (HTML/CSS diagram)
-        9. Section 8: Path to Recovery (HTML/CSS list)
+        9. Section 8: Path to Recovery (HTML/CSS list) - WITH NEW GEMINI API FEATURE
         10. Footer
 
         Visualization Choices & Justification (Confirming NO SVG/Mermaid):
@@ -87,6 +100,7 @@
         - Gambling Addiction Stages: HTML/CSS Process Flow. Goal: Organize. Justification: Phases. Method: HTML/CSS. NO SVG.
         - SWOT Analysis: HTML/CSS Diagram. Goal: Organize. Justification: Strategic overview. Method: HTML/CSS. NO SVG.
         - Steps to Recovery: HTML/CSS List. Goal: Organize. Justification: Actionable steps. Method: HTML/CSS. NO SVG.
+        - Coping Strategies: Gemini API. Goal: Inform/Support. Justification: Personalized, dynamic suggestions. Method: JS Fetch to Gemini. NO SVG.
 
         Confirmation:
         - NO Mermaid JS was used.
@@ -349,7 +363,27 @@
                     <li><strong>تطوير مهارات التأقلم:</strong> تعلم كيفية التعامل مع المحفزات ومنع الانتكاس.</li>
                     <li><strong>تبني نمط حياة صحي:</strong> الاهتمام بالتغذية، الرياضة، والنوم.</li>
                 </ol>
-                <p class="mt-6 text-lg accent-text font-semibold">تذكر: أنت لست وحدك، والتعافي ممكن.</p>
+
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-xl font-semibold mb-3 text-[#2A6EBB]">✨ اقتراحات لمواجهة التحديات بالذكاء الاصطناعي</h3>
+                    <p class="text-gray-700 mb-4 text-sm">
+                        هل تشعر ببعض الضغط أو الرغبة الملحة؟ احصل على بعض الاقتراحات العامة (غير طبية) لمساعدتك على التأقلم.
+                    </p>
+                    <div class="mb-4">
+                        <label for="feelingInput" class="block text-sm font-medium text-gray-700 mb-1">صف شعورك الحالي (اختياري):</label>
+                        <input type="text" id="feelingInput" class="mt-1 block w-full md:w-1/2 mx-auto p-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#34A89A] focus:border-[#34A89A] sm:text-sm" placeholder="مثال: متوتر، وحيد، لدي رغبة ملحة">
+                    </div>
+                    <button id="getCopingStrategies" class="bg-[#34A89A] hover:bg-[#2A6EBB] text-white font-bold py-2 px-4 rounded-lg shadow transition duration-150 ease-in-out">
+                        احصل على اقتراحات للتأقلم
+                    </button>
+                    <div id="loadingIndicator" class="mt-4 text-center" style="display: none;">
+                        <div class="loader"></div>
+                        <p class="text-sm text-gray-600">جاري إنشاء الاقتراحات...</p>
+                    </div>
+                    <div id="copingStrategiesResult" class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-gray-700 min-h-[50px] text-sm text-right" style="display: none;">
+                        </div>
+                </div>
+                <p class="mt-8 text-lg accent-text font-semibold">تذكر: أنت لست وحدك، والتعافي ممكن.</p>
             </div>
         </section>
 
@@ -386,7 +420,7 @@
                         }
                     });
                     if (currentLine) lines.push(currentLine);
-                    return lines.length > 0 ? lines : [label]; // Return original if somehow it becomes empty
+                    return lines.length > 0 ? lines : [label]; 
                 }
                 return label;
             });
@@ -435,7 +469,6 @@
         };
 
 
-        // Risk Factors Chart (Radar)
         const riskFactorsCtx = document.getElementById('riskFactorsChart')?.getContext('2d');
         if (riskFactorsCtx) {
             new Chart(riskFactorsCtx, {
@@ -444,8 +477,8 @@
                     labels: wrapLabels(['وراثي', 'بيئي (أسرة/أقران)', 'نفسي (اضطرابات)', 'صدمات نفسية', 'بدء مبكر', 'طبيعة المادة/السلوك']),
                     datasets: [{
                         label: 'تأثير عامل الخطر (تقديري)',
-                        data: [75, 80, 85, 70, 90, 65], // Hypothetical values for illustration
-                        backgroundColor: 'rgba(52, 168, 154, 0.2)', // secondaryTeal transparent
+                        data: [75, 80, 85, 70, 90, 65], 
+                        backgroundColor: 'rgba(52, 168, 154, 0.2)', 
                         borderColor: secondaryTeal,
                         pointBackgroundColor: secondaryTeal,
                         pointBorderColor: '#fff',
@@ -471,7 +504,6 @@
             });
         }
 
-        // Global Drug Use Chart (Bar)
         const globalDrugUseCtx = document.getElementById('globalDrugUseChart')?.getContext('2d');
         if (globalDrugUseCtx) {
             new Chart(globalDrugUseCtx, {
@@ -481,7 +513,7 @@
                     datasets: [{
                         label: 'عدد المتعاطين بالملايين (2022)',
                         data: [228, 60, 30, 23, 20],
-                        backgroundColor: [primaryBlue, secondaryTeal, accentYellow, '#6C757D', '#DC3545'], // Using palette colors + grays/reds
+                        backgroundColor: [primaryBlue, secondaryTeal, accentYellow, '#6C757D', '#DC3545'], 
                         borderColor: darkGray,
                         borderWidth: 1
                     }]
@@ -490,7 +522,6 @@
             });
         }
         
-        // MENA DALY Chart (Line)
         const menaDalyCtx = document.getElementById('menaDalyChart')?.getContext('2d');
         if (menaDalyCtx) {
             new Chart(menaDalyCtx, {
@@ -511,7 +542,6 @@
             });
         }
 
-        // Alcohol Problems Chart (Donut)
         const alcoholProblemsCtx = document.getElementById('alcoholProblemsChart')?.getContext('2d');
         if (alcoholProblemsCtx) {
             new Chart(alcoholProblemsCtx, {
@@ -520,7 +550,7 @@
                     labels: wrapLabels(['مشاكل صحية', 'مشاكل اجتماعية', 'مشاكل قانونية']),
                     datasets: [{
                         label: 'أنواع مشاكل إدمان الكحول (تقديري)',
-                        data: [50, 35, 15], // Illustrative percentages
+                        data: [50, 35, 15], 
                         backgroundColor: [primaryBlue, secondaryTeal, accentYellow],
                         hoverOffset: 4
                     }]
@@ -529,6 +559,75 @@
             });
         }
 
+        // Gemini API Feature: Coping Strategies
+        const getCopingStrategiesButton = document.getElementById('getCopingStrategies');
+        const copingStrategiesResultDiv = document.getElementById('copingStrategiesResult');
+        const feelingInput = document.getElementById('feelingInput');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+
+        if (getCopingStrategiesButton) {
+            getCopingStrategiesButton.addEventListener('click', async () => {
+                const userFeeling = feelingInput.value.trim();
+                let promptText = "أنا شخص في رحلة التعافي من الإدمان. ";
+                if (userFeeling) {
+                    promptText += `أشعر حاليًا بـ '${userFeeling}'. `;
+                } else {
+                    promptText += "أشعر ببعض الضغط والرغبة في الحصول على دعم. ";
+                }
+                promptText += "اقترح عليّ 3-4 استراتيجيات تأقلم عامة وبسيطة (غير طبية) لمساعدتي في التعامل مع هذه المشاعر أو الرغبات. يجب أن تكون الاقتراحات باللغة العربية. ركز على نصائح عملية ومشجعة يمكنني تطبيقها الآن. لا تقدم أي نصيحة طبية أو علاجية متخصصة.";
+
+                loadingIndicator.style.display = 'block';
+                copingStrategiesResultDiv.style.display = 'none';
+                copingStrategiesResultDiv.innerHTML = ''; // Clear previous results
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: promptText }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // API key will be injected by Canvas environment
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({ error: { message: 'Unknown API error structure' } }));
+                        console.error("API Error Data:", errorData);
+                        throw new Error(`فشلت الاستجابة من الخادم (الحالة: ${response.status}). ${errorData.error?.message || 'خطأ غير معروف من الواجهة البرمجية.'}`);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        // Format text: split by newline, wrap lines in <p>, bold lines starting with a number or asterisk
+                        const formattedText = text.split('\n').map(line => {
+                            line = line.trim();
+                            if (!line) return ''; // Skip empty lines
+                            if (line.match(/^(\d+\.|-|\*)\s*.+/)) { // Detects lines starting with "1.", "-", "*" followed by a space
+                                return `<p class="mb-2 font-semibold">${line}</p>`;
+                            }
+                            return `<p class="mb-2">${line}</p>`;
+                        }).join('');
+                        copingStrategiesResultDiv.innerHTML = formattedText || '<p>لم يتم العثور على اقتراحات. حاول مرة أخرى.</p>';
+                    } else {
+                        console.error("Unexpected API response structure:", result);
+                        copingStrategiesResultDiv.innerHTML = '<p>عذرًا، لم نتمكن من إنشاء اقتراحات في الوقت الحالي. يرجى المحاولة مرة أخرى لاحقًا.</p>';
+                    }
+                } catch (error) {
+                    console.error('Error fetching coping strategies:', error);
+                    copingStrategiesResultDiv.innerHTML = `<p>حدث خطأ أثناء محاولة الحصول على الاقتراحات: ${error.message}. يرجى التأكد من اتصالك بالإنترنت والمحاولة مرة أخرى.</p>`;
+                } finally {
+                    loadingIndicator.style.display = 'none';
+                    copingStrategiesResultDiv.style.display = 'block';
+                }
+            });
+        }
     </script>
 
 </body>
